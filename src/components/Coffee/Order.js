@@ -1,60 +1,58 @@
 import React, { useState } from 'react';
 
-const MyForm = () => {
-  const [it, setIt] = useState('');
-  const [english, setEnglish] = useState('');
-  const [average, setAverage] = useState(null);
-  const [xl, setXL] = useState('');
-  const calculate = (e) => {
-    e.preventDefault();
-    const itScore = parseFloat(it);
-    const englishScore = parseFloat(english);
-    const avg = (itScore + englishScore) / 2;
-    setAverage(avg);
-    if (avg >= 10) {
-      setXL('Xuất sắc');
-    } else if (avg >= 8) {
-      setXL('Giỏi');
-    } else if (avg >= 7) {
-      setXL('Khá');
-    } else if (avg >= 6) {
-      setXL('Trung bình');
-    } else {
-      setXL('Yếu');
-    }
-    // alert(`Điểm: ${avg}, xl: ${xl}`);
+const MenuForm = () => {
+  const [order, setOrder] = useState({});
+  const [total, setTotal] = useState(0);
+
+  const menuItems = [
+    { name: 'Pizza', price: 100 },
+    { name: 'Burger', price: 50 },
+    { name: 'Pasta', price: 80 },
+    { name: 'Salad', price: 30 },
+  ];
+
+  const handleChange = (e) => {
+    const { name, checked } = e.target;
+    setOrder((prevOrder) => ({
+      ...prevOrder,
+      [name]: checked,
+    }));
   };
+
+  const calculateTotal = () => {
+    let sum = 0;
+    for (const item of menuItems) {
+      if (order[item.name]) {
+        sum += item.price;
+      }
+    }
+    setTotal(sum);
+  };
+
   return (
     <div>
-      <h1>Điểm trung bình: {average !== null ? average : 'Chưa tính toán'}</h1>
-      <h2>Xếp loại: {xl}</h2>
-      <form onSubmit={calculate}>
-        <div>
-          <label>
-            IT:
-            <input
-              type="number"
-              value={it}
-              onChange={(e) => setIt(e.target.value)}
-              required
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            English:
-            <input
-              type="number"
-              value={english}
-              onChange={(e) => setEnglish(e.target.value)}
-              required
-            />
-          </label>
-        </div>
-        <button type="submit">order</button>
+      <h1>Menu</h1>
+      <form>
+        {menuItems.map((item) => (
+          <div key={item.name}>
+            <label>
+              <input
+                type="checkbox"
+                name={item.name}
+                checked={order[item.name] || false}
+                onChange={handleChange}
+              />
+              {item.name} - {item.price} VNĐ
+            </label>
+          </div>
+        ))}
+        <button type="button" onClick={calculateTotal}>
+          Tính tổng
+        </button>
       </form>
+      <h2>Tổng tiền: {total} VNĐ</h2>
     </div>
   );
 };
 
-export default MyForm;
+export default MenuForm;
